@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"github.com/rroy233/logger"
 	"log"
 )
 
@@ -36,14 +37,16 @@ func (h *Helper) Do() error {
 	if err := h.GetBirthdayRole(); err != nil {
 		log.Fatalln(err)
 	}
+	//logger.Debug.Println(h.account.Cookie)
+
 	if len(h.roles.Data.Role) == 0 {
-		log.Println("今天没有角色生日")
+		logger.Info.Println("今天没有角色生日")
 		return nil
 	}
 
 	//获取生日贺卡
 	if err := h.PostBirthday(); err != nil {
-		log.Fatalln(err)
+		logger.FATAL.Fatalln(err)
 	}
 	return nil
 }

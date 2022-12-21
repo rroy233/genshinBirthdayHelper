@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/rroy233/logger"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"regexp"
 	"strings"
@@ -54,7 +54,7 @@ func (h *Helper) Login() error {
 
 	respData, _ := ioutil.ReadAll(resp.Body)
 
-	//log.Println(string(respData))
+	//logger.Debug.Println(resp.Header)
 	h.info = new(RespInfo)
 	if err = json.Unmarshal(respData, h.info); err != nil {
 		return err
@@ -101,7 +101,7 @@ func (h *Helper) GetBirthdayRole() error {
 
 	respData, _ := ioutil.ReadAll(resp.Body)
 
-	//log.Println(string(respData))
+	//logger.Debug.Println(string(respData))
 
 	h.roles = new(RespBirthdayRole)
 	if err = json.Unmarshal(respData, h.roles); err != nil {
@@ -154,9 +154,9 @@ func (h *Helper) PostBirthday() error {
 		}
 
 		if res.Retcode == 0 {
-			log.Printf("[%d] - 今天是【%s】的生日！已成功获取生日贺卡【%s】！\n", i, r.Name, r.TakePicture)
+			logger.Info.Printf("[%d] - 今天是【%s】的生日！已成功获取生日贺卡【%s】！\n", i, r.Name, r.TakePicture)
 		} else if res.Retcode == -512009 {
-			log.Printf("[%d] - 今天是【%s】的生日！你之前已领取！\n", i, r.Name)
+			logger.Info.Printf("[%d] - 今天是【%s】的生日！你之前已领取！\n", i, r.Name)
 		} else {
 			return errors.New("请求返回错误：" + h.roles.Message)
 		}

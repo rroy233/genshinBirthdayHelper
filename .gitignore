@@ -1,3 +1,5 @@
 config.json
 /.idea
 /bin
+/log
+init.go
