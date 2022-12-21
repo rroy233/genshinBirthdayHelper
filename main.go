@@ -7,6 +7,7 @@ import (
 	"github.com/rroy233/logger"
 	"log"
 	"os"
+	"time"
 )
 
 type ConfigStruct struct {
@@ -51,6 +52,9 @@ func main() {
 		}
 	}
 
+	defer func() {
+		time.Sleep(200 * time.Millisecond)
+	}()
 }
 
 func loadConfig() error {
