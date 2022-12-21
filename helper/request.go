@@ -70,7 +70,7 @@ func (h *Helper) Login() error {
 		if eHk4eToken != "" {
 			h.account.Cookie = strings.Replace(h.account.Cookie, " ", "", -1) //去空格
 			if strings.Contains(h.account.Cookie, "e_hk4e_token") == true {
-				old, _ := MatchSingle(regexp.MustCompile(`e_hk4e_token=(.+?);`), sc)
+				old, _ := MatchSingle(regexp.MustCompile(`e_hk4e_token=(.+?);`), h.account.Cookie)
 				h.account.Cookie = strings.Replace(h.account.Cookie, old, eHk4eToken, -1)
 			} else {
 				if strings.HasSuffix(h.account.Cookie, ";") == false {
