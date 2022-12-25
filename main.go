@@ -62,7 +62,7 @@ func loadConfig() error {
 	_, err := os.Open("./config.json")
 	if err != nil {
 		if os.IsNotExist(err) == true {
-			os.WriteFile("./config.json", []byte("{\"accounts\":[{\"server\":\"cn_gf01\",\"uid\":\"\",\"mys-cookie\":\"\"}],\"logger\":{\"enabled\":true,\"report\":false,\"reportUrl\":\"http://127.0.0.1:8990/log\",\"queryKey\":\"?key=\"}}"), 0755)
+			os.WriteFile("./config.json", []byte("{\n\t\"accounts\": [{\n\t\t\"server\": \"cn_gf01\",\n\t\t\"uid\": \"xxx\",\n\t\t\"mys-cookie\": \"\"\n\t}],\n\t\"logger\": {\n\t\t\"enabled\": true,\n\t\t\"report\": false,\n\t\t\"reportUrl\": \"http://localhost/api/logUpload\",\n\t\t\"queryKey\": \"?key=xxxx\"\n\t}\n}"), 0755)
 			return errors.New("配置文件不存在，已自动创建，请手动填入cookie。")
 		}
 	}
