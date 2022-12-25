@@ -17,7 +17,7 @@ type ConfigStruct struct {
 		Report    bool   `json:"report"`
 		ReportUrl string `json:"reportUrl"`
 		QueryKey  string `json:"queryKey"`
-	} `json:"logger"`
+	} `json:"logger,omitempty"`
 }
 
 var config *ConfigStruct
@@ -30,15 +30,21 @@ func main() {
 	}
 
 	//日志服务
-	logger.New(&logger.Config{
-		StdOutput:      true,
-		StoreLocalFile: config.Logger.Enabled,
-		StoreRemote:    config.Logger.Report,
-		RemoteConfig: logger.RemoteConfigStruct{
-			RequestUrl: config.Logger.ReportUrl,
-			QueryKey:   config.Logger.QueryKey,
-		},
-	})
+	if config.Logger.Enabled == true {
+		logger.New(&logger.Config{
+			StdOutput:      true,
+			StoreLocalFile: config.Logger.Enabled,
+			StoreRemote:    config.Logger.Report,
+			RemoteConfig: logger.RemoteConfigStruct{
+				RequestUrl: config.Logger.ReportUrl,
+				QueryKey:   config.Logger.QueryKey,
+			},
+		})
+	} else {
+		logger.New(&logger.Config{
+			StdOutput: true,
+		})
+	}
 
 	for i, account := range config.Accounts {
 		//初始化
