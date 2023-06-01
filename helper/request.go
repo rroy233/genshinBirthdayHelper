@@ -2,11 +2,13 @@ package helper
 
 import (
 	"bytes"
+	"compress/flate"
+	"compress/gzip"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/rroy233/logger"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"regexp"
 	"strings"
@@ -52,7 +54,8 @@ func (h *Helper) Login() error {
 	}
 	defer resp.Body.Close()
 
-	respData, _ := ioutil.ReadAll(resp.Body)
+	bodyReader, err := h.switchContentEncoding(resp)
+	respData, _ := io.ReadAll(bodyReader)
 
 	//logger.Debug.Println(resp.Header)
 	h.info = new(RespInfo)
@@ -93,13 +96,16 @@ func (h *Helper) GetBirthdayRole() error {
 	req.Host = "hk4e-api.mihoyo.com"
 	h.setHeader(req)
 
+	//logger.Debug.Println(req)
+
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
 
-	respData, _ := ioutil.ReadAll(resp.Body)
+	bodyReader, err := h.switchContentEncoding(resp)
+	respData, _ := io.ReadAll(bodyReader)
 
 	//logger.Debug.Println(string(respData))
 
@@ -144,7 +150,8 @@ func (h *Helper) PostBirthday() error {
 		}
 		defer resp.Body.Close()
 
-		respData, _ := ioutil.ReadAll(resp.Body)
+		bodyReader, err := h.switchContentEncoding(resp)
+		respData, _ := io.ReadAll(bodyReader)
 
 		//log.Println(string(respData))
 
@@ -167,12 +174,27 @@ func (h *Helper) PostBirthday() error {
 }
 
 func (h *Helper) setHeader(req *http.Request) {
-	req.Header.Set("Origin", "https://webstatic.mihoyo.com")
-	req.Header.Set("Cookie", h.account.Cookie)
-	req.Header.Set("Connection", "keep-alive")
-	req.Header.Set("Accept", "*/*")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 15_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.36.1")
-	req.Header.Set("Accept-Language", "zh-CN,zh-Hans;q=0.9")
-	req.Header.Set("Referer", "https://webstatic.mihoyo.com/")
+	req.Header.Set("Sec-Fetch-Site", "same-site")
 	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
+	req.Header.Set("Accept-Language", "zh-CN,zh-Hans;q=0.9")
+	req.Header.Set("Sec-Fetch-Mode", "cors")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Origin", "https://webstatic.mihoyo.com")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.51.1")
+	req.Header.Set("Connection", "keep-alive")
+	req.Header.Set("Referer", "https://webstatic.mihoyo.com/")
+	req.Header.Set("Cookie", h.account.Cookie)
+	req.Header.Set("Sec-Fetch-Dest", "empty")
+}
+
+func (h *Helper) switchContentEncoding(res *http.Response) (bodyReader io.Reader, err error) {
+	switch res.Header.Get("Content-Encoding") {
+	case "gzip":
+		bodyReader, err = gzip.NewReader(res.Body)
+	case "deflate":
+		bodyReader = flate.NewReader(res.Body)
+	default:
+		bodyReader = res.Body
+	}
+	return
 }

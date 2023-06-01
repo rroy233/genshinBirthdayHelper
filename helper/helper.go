@@ -2,7 +2,6 @@ package helper
 
 import (
 	"github.com/rroy233/logger"
-	"log"
 )
 
 type Helper struct {
@@ -35,7 +34,8 @@ func New(account Account) (*Helper, error) {
 func (h *Helper) Do() error {
 	//查看今天是否有角色生日
 	if err := h.GetBirthdayRole(); err != nil {
-		log.Fatalln(err)
+		logger.Error.Println(err)
+		return err
 	}
 	//logger.Debug.Println(h.account.Cookie)
 

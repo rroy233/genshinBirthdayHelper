@@ -35,6 +35,7 @@ func main() {
 			StdOutput:      true,
 			StoreLocalFile: config.Logger.Enabled,
 			StoreRemote:    config.Logger.Report,
+			NotUseJson:     true,
 			RemoteConfig: logger.RemoteConfigStruct{
 				RequestUrl: config.Logger.ReportUrl,
 				QueryKey:   config.Logger.QueryKey,
